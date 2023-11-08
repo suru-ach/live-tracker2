@@ -5,16 +5,13 @@ const port = process.env.PORT | 3000;
 
 const authRouter = require('./router/auth.route.js');
 
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(authRouter);
 
-const startServer = async () => {
-    try {
-        app.listen(port, () => { console.log(`listening on port ${port}`) });
-    } catch (err) {
-        console.log(err);
-    }
-}
-startServer();
+const server = app.listen(port, () => { console.log(`listening on port ${port}`) });
+
+server.keepAliveTimeout = 120 * 1000;
+server.headersTimeout = 120 * 1000;
