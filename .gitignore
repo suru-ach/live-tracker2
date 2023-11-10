@@ -2,3 +2,4 @@
 /test
 /queries
 .env
+package-lock.json
