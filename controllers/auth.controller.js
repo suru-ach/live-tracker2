@@ -4,6 +4,14 @@ const { hashPassword, comparePassword } = require('../utils/hashPassword.js');
 const { clientInstance } = require('../db/config.js');
 const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/jwt.js');
 
+
+class tokenError extends Error{
+    constructor(message) {
+        super(message);
+        this.data = message;
+    }
+};
+
 const generateAndSetTokens = async (res, username, phonenumber, newTokens = true) => {
     const accessToken = generateAccessToken({
         username,
@@ -25,7 +33,7 @@ const generateAndSetTokens = async (res, username, phonenumber, newTokens = true
             await clientInstance.query('insert into refreshtokens(uid, refreshtoken) values ($1, $2)', [result.rows[0].uid, refreshToken]);
         }
         catch(err) {
-            throw new Error(err);
+            throw new tokenError('new token creation error');
         }
         finally {
             if(client) client.release();
@@ -38,7 +46,7 @@ const generateAndSetTokens = async (res, username, phonenumber, newTokens = true
             refreshToken = result.rows[0].refreshtoken;
         }
         catch(err) {
-            throw new Error(err);
+            throw new tokenError('access token generation fail');
         }
         finally {
             if(client) client.release();
@@ -135,6 +143,8 @@ const login = async (req, res) => {
         return res.status(201).json({ data: 'success login' });
     }
     catch(err) {
+        if(err instanceof tokenError)
+            return res.status(500).json({ data: err.data });
         return res.status(500).json({ data: err });
     }
     finally {
