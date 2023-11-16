@@ -6,9 +6,9 @@ const {
     makeFriend
 } = require('../controllers/friends.controller.js');
 
-const { verifyToken } = require('../utils/jwt.js');
+const { verifyToken2 } = require('../utils/jwt.js');
 
-router.route('/makefriend').post(verifyToken, makeFriend);
-router.route('/getfriends').get(verifyToken, getFriends);
+router.route('/makefriend').post(verifyToken2, makeFriend);
+router.route('/getfriends').get(verifyToken2, getFriends);
 
 module.exports = router;

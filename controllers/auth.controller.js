@@ -2,15 +2,94 @@ const { v4: uuidv4 } = require('uuid');
 
 const { hashPassword, comparePassword } = require('../utils/hashPassword.js');
 const { clientInstance } = require('../db/config.js');
-const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = require('../utils/jwt.js');
+const { generateAccessToken, generateRefreshToken, verifyRefreshToken, verifyToken2 } = require('../utils/jwt.js');
 
+const setTokens = (res, accessToken, refreshToken) => {
+    res.cookie('access_token', accessToken, {
+        httpOnly: true,
+        secure: false, // Set to true if using HTTPS
+        sameSite: 'None',
+        maxAge: 60 * 60 * 1000,
+    });
 
-class tokenError extends Error{
-    constructor(message) {
-        super(message);
-        this.data = message;
+    res.cookie('refresh_token', refreshToken, {
+        httpOnly: true,
+        secure: false, // Set to true if using HTTPS
+        sameSite: 'None',
+        maxAge: 24 * 60 * 60 * 1000,
+    });
+    // I know I could have used middleware shut up
+    res.header('Access-Control-Allow-Origin', 'http://localhost:5500');
+    res.header('Access-Control-Allow-Credentials', true);
+}
+
+const signup2 = async(req, res) => {
+    const { phonenumber, password, username } = req.body;
+
+    if(!phonenumber || !password || !username)
+        return res.status(401).json({ data: "unauthorized, invalid username or password" });
+
+    const uid = uuidv4();
+    const hashpassword = await hashPassword(password);
+    const queryText = 'insert into "user" (uid, username, phonenumber, hashedpassword) values ($1,$2,$3,$4) returning *';
+    const queryParams = [uid, username, phonenumber, hashpassword];
+    let client;
+
+    try {
+        client = await clientInstance.connect();
+        await clientInstance.query(queryText, queryParams);
+        return res.status(201).json({ data: 'successful signup' });
     }
-};
+    catch(err) {
+        if(err.code === '23505')
+            return res.status(403).json({ data: 'user already exists' });
+        return res.status(500).json({ data: err });
+    }
+    finally {
+        if(client) client.release();    
+    }
+}
+
+const signin = async(req, res) => {
+    const { phonenumber, password } = req.body;
+
+    if(!phonenumber || !password)
+        return res.status(401).json({ data: "unauthorized, invalid username or password" });
+
+    const queryText = 'select uid, username, hashedpassword from "user" where phonenumber = $1';
+    const queryParams = [phonenumber];
+    let client;
+
+    try {
+        client = await clientInstance.connect();
+        const result = await clientInstance.query(queryText, queryParams);
+        
+        if(result.rows.length === 0)
+            return res.status(401).json({ data: 'uses does not exist' });
+        
+        const { username, hashedpassword } = result.rows[0];
+       
+        if(await comparePassword(password, hashedpassword)) {
+            const accessToken = generateAccessToken({ username, phonenumber });
+            const refreshToken = generateRefreshToken({ username, phonenumber });
+            
+            await clientInstance.query('delete from refreshtokens where refreshtokens.uid in (select "user".uid from "user" where phonenumber = $1)', [phonenumber]);
+            await clientInstance.query('insert into refreshtokens values($1, $2)', [result.rows[0].uid, refreshToken]);
+
+            setTokens(res, accessToken, refreshToken);
+            return res.status(200).json({ data: 'success login' });
+        } else {
+            return res.status(401).json({ data: 'invalid authentication credentials' });
+        }
+
+    }
+    catch(err) {
+        return res.status(500).json({ data: err });
+    }
+    finally {
+        if(client) client.release();    
+    }
+}
 
 const generateAndSetTokens = async (res, username, phonenumber, newTokens = true) => {
     const accessToken = generateAccessToken({
@@ -33,7 +112,7 @@ const generateAndSetTokens = async (res, username, phonenumber, newTokens = true
             await clientInstance.query('insert into refreshtokens(uid, refreshtoken) values ($1, $2)', [result.rows[0].uid, refreshToken]);
         }
         catch(err) {
-            throw new tokenError('new token creation error');
+            throw new Error('new token creation error');
         }
         finally {
             if(client) client.release();
@@ -46,7 +125,7 @@ const generateAndSetTokens = async (res, username, phonenumber, newTokens = true
             refreshToken = result.rows[0].refreshtoken;
         }
         catch(err) {
-            throw new tokenError('access token generation fail');
+            throw new Error('access token generation fail');
         }
         finally {
             if(client) client.release();
@@ -72,9 +151,14 @@ const generateAndSetTokens = async (res, username, phonenumber, newTokens = true
 }
 
 const refreshToken = async (req, res) => {
+    if(!req.cookies.refresh_token)
+        return res.status(403).json('unauthorized not session token sent');
+
+    // let off here refresh token by saving getting the refresh token
+    let client;
     try {
-        const { username, phonenumber } = verifyRefreshToken(req.cookies.refresh_token);
-        await generateAndSetTokens(res, username, phonenumber, false);
+        const accessToken = generateAccessToken({ username, phonenumber });
+        setTokens(res, accessToken, req.cookies.refresh_token);
         return res.status(201).json({ data: "successful refresh token"});        
     }
     catch(err) {
@@ -143,8 +227,6 @@ const login = async (req, res) => {
         return res.status(201).json({ data: 'success login' });
     }
     catch(err) {
-        if(err instanceof tokenError)
-            return res.status(500).json({ data: err.data });
         return res.status(500).json({ data: err });
     }
     finally {
@@ -172,7 +254,9 @@ const signout = async (req, res) => {
 
 module.exports = {
     signup,
+    signup2,
     login,
+    signin,
     signout,
     refreshToken
 }
