@@ -3,7 +3,7 @@ const router = express.Router();
 
 const {
     getcoords,
-    updatecoords
+    updatecoords,
 } = require('../controllers/coords.controller.js');
 
 

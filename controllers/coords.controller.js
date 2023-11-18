@@ -1,3 +1,4 @@
+const path = require('path');
 const { Pool } = require('pg');
 const clientInstance = new Pool({
     connectionString: process.env.CONNECTION_STRING_PG,
