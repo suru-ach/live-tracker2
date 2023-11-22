@@ -7,20 +7,20 @@ const { generateAccessToken, generateRefreshToken, verifyRefreshToken, verifyTok
 const setTokens = (res, accessToken, refreshToken) => {
     res.cookie('access_token', accessToken, {
         httpOnly: true,
-        secure: false, // Set to true if using HTTPS
+        secure: true, // Set to true if using HTTPS
         sameSite: 'None',
         maxAge: 60 * 60 * 1000,
     });
 
     res.cookie('refresh_token', refreshToken, {
         httpOnly: true,
-        secure: false, // Set to true if using HTTPS
+        secure: true, // Set to true if using HTTPS
         sameSite: 'None',
         maxAge: 24 * 60 * 60 * 1000,
     });
     // I know I could have used middleware shut up
-    res.header('Access-Control-Allow-Origin', 'http://localhost:5500');
-    res.header('Access-Control-Allow-Credentials', true);
+    // 'Access-Control-Allow-Origin', to 128.0.0.0:5050
+    // 'Access-Control-Allow-Credentials'
 }
 
 const signup2 = async(req, res) => {

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <link href="./global.css" rel="stylesheet"></link>
+</head>
+
+<body>
+    <div class="wrapper">
+        <form id="form-login">
+            <div class="heading">
+                <h2>Welcome!</h2>
+                <p>Sign Up</p>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="username" class="input-field" placeholder="Username">
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password" class="input-field" placeholder="Password">
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password-check" class="input-field" placeholder="Password">
+            </div>
+
+            <div class="input-group">
+                <input type="tel" id="phone-number" class="input-field" placeholder="Phone">
+            </div>
+
+
+            <div class="input-group row">
+                <div class="row">
+                    <div id="alert">message</div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="g-recaptcha" data-sitekey="6Lf_gdwoAAAAABES0d0-F42O2kI83nm9b3k1Bx3D"></div>
+                <button type="submit">Signup</button>
+            </div>
+        </form>
+    </div>
+
+    <footer>
+        Have an account,
+        <a href="./index.html"> Log in </a>
+        here
+    </footer>
+
+    <script>
+        function onSubmit(token) {
+            document.getElementById("form-login").submit();
+        }
+    </script>
+    <script src="./signup.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</body>
+
+</html>

@@ -29,7 +29,7 @@ const verifyToken2 = async (req, res, next) => {
         req.payload = verify(authorizationRefreshString, process.env.REFRESH_TOKEN);
     } catch(err) {
         if(err instanceof TokenExpiredError)
-            return res.status(401).json({ data: "session expired, sign in"});
+            return res.status(403).json({ data: "session expired, sign in"});
         else
             return res.status(401).json({ data: "session error"});
     }
