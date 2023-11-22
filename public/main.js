@@ -41,6 +41,7 @@ form.addEventListener('submit', async (e) => {
     })
         .then(res => res.json())
         .then(data => {
+            console.log(data);
             message_alerts.innerHTML = data ? data : 'error in signin';
             message_alerts.classList.add('mes-success');
             setTimeout(() => {
@@ -64,7 +65,8 @@ form.addEventListener('submit', async (e) => {
     })
         .then(res => res.json())
         .then(data => {
-            message_alerts.innerHTML = data ? data : 'error in signin';
+            console.log(data);
+            message_alerts.innerHTML = data ? data : 'error in getfriends';
             message_alerts.classList.add('mes-success');
             setTimeout(() => {
                 message_alerts.innerHTML = "";
