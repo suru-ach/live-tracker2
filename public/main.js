@@ -39,23 +39,34 @@ form.addEventListener('submit', async (e) => {
         headers: header,
         body: JSON.stringify({ phonenumber: phonenumber.value, password: password.value })
     })
-        .then(res => res.json())
+        .then((res) => { 
+            if(res.status === 200) {
+                message_alerts.classList.add('mes-success');
+                window.location = '/coords.html';
+            }
+            else {
+                message_alerts.classList.add('mes-failure');
+            }
+            return res.json() 
+        })
         .then(data => {
-            console.log(data);
-            message_alerts.innerHTML = data ? data : 'error in signin';
-            message_alerts.classList.add('mes-success');
+            message_alerts.innerHTML = data.data;
             setTimeout(() => {
                 message_alerts.innerHTML = "";
+                message_alerts.classList.remove('mes-failure');
+                message_alerts.classList.remove('mes-success');
             },3000);
         })
         .catch(err => {
             message_alerts.innerHTML = err.data ? err.data : 'error in signin';
-            message_alerts.classList.add('mes-error');
             setTimeout(() => {
                 message_alerts.innerHTML = "";
+                message_alerts.classList.remove('mes-success');
+                message_alerts.classList.remove('mes-failure');
             },3000);
         })
 
+    // test protected route
     await fetch('/getfriends', {
         method: 'GET',
         credentials: 'include',
@@ -66,15 +77,16 @@ form.addEventListener('submit', async (e) => {
         .then(res => res.json())
         .then(data => {
             console.log(data);
-            message_alerts.innerHTML = data ? data : 'error in getfriends';
-            message_alerts.classList.add('mes-success');
+            // message_alerts.innerHTML = data.data ? data.data : 'error in getfriends';
+            //message_alerts.classList.add('mes-success');
             setTimeout(() => {
                 message_alerts.innerHTML = "";
             },3000);
         })
         .catch(err => {
-            message_alerts.innerHTML = err.data ? err.data : 'error in getfriends';
-            message_alerts.classList.add('mes-error');
+            console.log(err);
+            // message_alerts.innerHTML = err.data ? err.data : 'error in getfriends';
+            // message_alerts.classList.add('mes-error');
             setTimeout(() => {
                 message_alerts.innerHTML = "";
             },3000);

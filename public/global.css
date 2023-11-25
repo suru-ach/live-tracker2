@@ -125,14 +125,14 @@ footer {
     margin: 20px;
 }
 
-mes-failure {
+.mes-failure {
 	color: rgb(220 38 38);
 }
 
-mes-success {
+.mes-success {
 	color: rgb(22 163 74);
 }
 
-mes-text {
+.mes-text {
     color: rgb(2 132 199);
 }

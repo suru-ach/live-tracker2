@@ -3,6 +3,7 @@ const username = document.getElementById('username');
 const password = document.getElementById('password');
 const passwordCheck = document.getElementById('password-check');
 const phonenumber = document.getElementById('phone-number');
+const message_alerts = document.getElementById('alert');
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -30,10 +31,11 @@ form.addEventListener('submit', async (e) => {
     const header = new Headers(headerAttributes);
 
     if (password.value !== passwordCheck.value)
-        // password not equal
-        console.log();
+        alert('password does not match');
 
-    await fetch('/signup', {
+    let signedUp = false;
+
+    await fetch('/signup2', {
         method: 'POST',
         credentials: 'include',
         headers: header,
@@ -43,9 +45,68 @@ form.addEventListener('submit', async (e) => {
             phonenumber: phonenumber.value
         })
     })
-        .then(res => res.json())
-        .then(data => console.log(data))
-        .catch(err => console.log(err))
+        .then((res) => {
+            if(res.status === 201)
+                signedUp = true;
+            return res.json();
+        })
+        .then(data => {
+            if(!signedUp) {
+                message_alerts.classList.add('mes-success');
+                message_alerts.innerHTML = data.data;
+                setTimeout(() => {
+                    message_alerts.innerHTML = "";
+                    message_alerts.classList.remove('mes-failure');
+                },3000);
+            }
+        })
+        .catch(err => {
+            message_alerts.innerHTML = err.data ? err.data : 'error in signin';
+            setTimeout(() => {
+                message_alerts.innerHTML = "";
+                message_alerts.classList.remove('mes-success');
+                message_alerts.classList.remove('mes-failure');
+            },3000);
+        })
+
+    if(!signedUp)
+        return;
+
+    await fetch('/signin', {
+        method: 'POST',
+        credentials: 'include',
+        headers: header,
+        body: JSON.stringify({
+            phonenumber: phonenumber.value,
+            password: password.value
+        })
+    })
+        .then((res) => { 
+            if(res.status === 200) {
+                message_alerts.classList.add('mes-success');
+                window.location = '/coords.html';
+            }
+            else {
+                message_alerts.classList.add('mes-failure');
+            }
+            return res.json() 
+        })
+        .then(data => {
+            message_alerts.innerHTML = data.data ? data.data : 'error in signin';
+            setTimeout(() => {
+                message_alerts.innerHTML = "";
+                message_alerts.classList.remove('mes-failure');
+                message_alerts.classList.remove('mes-success');
+            },3000);
+        })
+        .catch(err => {
+            message_alerts.innerHTML = err.data ? err.data : 'error in signin';
+            setTimeout(() => {
+                message_alerts.innerHTML = "";
+                message_alerts.classList.remove('mes-success');
+                message_alerts.classList.remove('mes-failure');
+            },3000);
+        })
 
     await fetch('/getfriends', {
         method: 'GET',
