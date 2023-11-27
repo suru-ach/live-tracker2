@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends</title>
+    <link href="./global.css" rel="stylesheet"></link>
+</head>
+<body>
+    <header>
+        <h1>Contact List</h1>
+    </header>
+
+    <div class="container">
+        <h1>Pending requests</h1>
+        <ul id="pending-friends" class="contact-list">
+            <!-- Add friends to send request-->
+        </ul>
+    </div>
+    <div class="container">
+        <h1>Friends List</h1>
+        <ul id="friends" class="contact-list">
+            <!-- Add more contacts as needed -->
+        </ul>
+    </div>
+    <div class="container">
+        <h1>Pending requests</h1>
+        <ul class="contact-list">
+            <li class="contact">
+                <input type="text" placeholder="phonenumber to request" id="friendphonenumber"></input>
+                <div class="button accept-button">
+                    send request
+                </div>
+            </li>
+        </ul>
+    </div>
+    <script src="./friends.js"></script>
+</body>
+</html>

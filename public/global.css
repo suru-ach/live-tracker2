@@ -126,13 +126,116 @@ footer {
 }
 
 .mes-failure {
-	color: rgb(220 38 38);
+    color: rgb(220 38 38);
 }
 
 .mes-success {
-	color: rgb(22 163 74);
+    color: rgb(22 163 74);
 }
 
 .mes-text {
     color: rgb(2 132 199);
+}
+
+/*
+ * contact page
+ * */
+
+header {
+    color: black;
+    text-align: center;
+    padding: 1rem;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.contact-list {
+    list-style: none;
+    padding: 0;
+}
+
+.contact {
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contact:last-child {
+    border-bottom: 0px solid #ccc;
+}
+
+.contact-img {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    background-color: rgba(10,30,50);
+}
+
+.button {
+    border-radius: 3px;
+    padding: 10px;
+    margin: auto;
+    font-weight: bold;
+    color: white;
+    min-width: 36px;
+}
+
+.delete-button {
+    background-color: #dc2626;
+}
+
+.delete-button:hover {
+    background-color: #b91c1c;
+}
+
+.accept-button{
+    background-color: #16a34a;
+}
+
+.accept-button:hover {
+    background-color: #15803d;
+}
+
+.button:hover {
+    cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+    .container {
+        width: 100vw;
+        padding: 10px;
+    }
+
+    .contact {
+        justify-content: left;
+        /*flex-direction: column;
+        align-items: flex-start;
+        text-align: left;*/
+    }
+
+    .contact-img {
+        margin-bottom: 10px;
+    }
+}
+
+.flex-row{
+    display: flex;
+}
+.flex-row > * {
+    margin-left:15px;
+}
+
+#friendphonenumber {
+    padding: 10px;
+    font-size: 16px;
 }
