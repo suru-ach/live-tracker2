@@ -149,6 +149,7 @@ header {
 
 .container {
     max-width: 800px;
+    width: 80%;
     margin: 20px auto;
     padding: 20px;
     background-color: #fff;
@@ -182,6 +183,7 @@ header {
 }
 
 .button {
+    margin-left: 12px;
     border-radius: 3px;
     padding: 10px;
     margin: auto;
@@ -225,6 +227,10 @@ header {
 
     .contact-img {
         margin-bottom: 10px;
+    }
+
+    .button {
+        margin-left: 6px;
     }
 }
 

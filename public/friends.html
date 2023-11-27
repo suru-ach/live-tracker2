@@ -7,7 +7,7 @@
     <title>Friends</title>
     <link href="./global.css" rel="stylesheet"></link>
 </head>
-<body>
+<body style='justify-content: start;'>
     <header>
         <h1>Contact List</h1>
     </header>
@@ -25,15 +25,17 @@
         </ul>
     </div>
     <div class="container">
-        <h1>Pending requests</h1>
+        <form id="friendrequest">
+        <h1>Send Friend Request</h1>
         <ul class="contact-list">
             <li class="contact">
-                <input type="text" placeholder="phonenumber to request" id="friendphonenumber"></input>
-                <div class="button accept-button">
-                    send request
-                </div>
+                    <input type="text" placeholder="phonenumber to request" id="friendphonenumber"></input>
+                    <button type="submit" class="button accept-button">
+                        send
+                    </button>
             </li>
         </ul>
+        </form>
     </div>
     <script src="./friends.js"></script>
 </body>

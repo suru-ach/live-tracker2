@@ -11,7 +11,7 @@ const getFriends = async (req, res) => {
         const sqlText = '\
             select u.username, u.phonenumber, f.isFriend \
             from friends as f, "user" as u \
-            where f.uid = $1 and f.fid = u.uid \
+            where f.uid = $1 and f.fid = u.uid and f.isFriend = true\
             union \
             select u.username, u.phonenumber, f.isFriend \
             from friends as f, "user" as u \
@@ -29,11 +29,30 @@ const getFriends = async (req, res) => {
     return res.status(200).json({ data: 'yes' });
 };
 
-const makeFriend = (req, res) => {
+const makeFriend = async (req, res) => {
+    const { phonenumber } = req.payload;
+    const { phonenumber: friendPhonenumber } = req.body;
+
+    let client;
+    try {
+        client = await clientInstance.connect();
+        const { rows: uid } = await clientInstance.query('select uid from "user" where phonenumber = $1', [phonenumber]);
+        const { rows: fid } = await clientInstance.query('select uid from "user" where phonenumber = $1', [friendPhonenumber]);
+        await clientInstance.query('insert into friends (uid, fid) values($1, $2)', [ uid[0].uid, fid[0].uid ]);
+        return res.status(201).json({ data: 'yes' });
+    }
+    catch(err) {
+        return res.status(403).json({});
+    }
     return res.status(200).json({ data: 'yes' });
 };
 
+const friendRequest = async (req, res) => {
+    return res.status(200).json({ data: 'yes' });
+}
+
 module.exports = {
     getFriends,
-    makeFriend
+    makeFriend,
+    friendRequest
 };
