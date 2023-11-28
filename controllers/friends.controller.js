@@ -42,15 +42,55 @@ const makeFriend = async (req, res) => {
     }
     catch(err) {
         return res.status(403).json({});
+    } finally {
+        if(client)
+            client.release();
     }
 };
 
+const removeFriend = async(req, res) => {
+    const { phonenumber } = req.payload;
+    const { phonenumber: friendPhonenumber } = req.body;
+
+    let client
+    try {
+        client = await clientInstance.connect();
+        const { rows: uid_rows } = await clientInstance.query('select uid from "user" where phonenumber = $1', [phonenumber]);
+        const { rows: fid_rows } = await clientInstance.query('select uid from "user" where phonenumber = $1', [friendPhonenumber]);
+        const { rows } = await clientInstance.query('delete from friends where (uid = $1 and fid = $2) or (uid = $2 and fid = $1)', [uid_rows[0].uid, fid_rows[0].uid]);
+        console.log(rows);
+        return res.status(200).json({ data: 'removed' });
+    } catch(err) {
+        return res.status(403).json({});
+    } finally {
+        if(client)
+            client.release();
+    }
+}
+
 const friendRequest = async (req, res) => {
-    return res.status(200).json({ data: 'yes' });
+    const { phonenumber } = req.payload;
+    const { phonenumber: friendPhonenumber } = req.body;
+
+    let client
+    try {
+        client = await clientInstance.connect();
+        const { rows: uid_rows } = await clientInstance.query('select uid from "user" where phonenumber = $1', [phonenumber]);
+        const { rows: fid_rows } = await clientInstance.query('select uid from "user" where phonenumber = $1', [friendPhonenumber]);
+        const { rows } = await clientInstance.query('update friends set isfriend = true where (uid = $2 and fid = $1)', [uid_rows[0].uid, fid_rows[0].uid]);
+        console.log(rows);
+        return res.status(200).json({ data: 'added to friends list' });
+    } catch(err) {
+        return res.status(403).json({});
+    } finally {
+        if(client)
+            client.release();
+    }
 }
 
 module.exports = {
     getFriends,
     makeFriend,
+    removeFriend,
     friendRequest
 };
