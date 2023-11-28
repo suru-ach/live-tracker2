@@ -26,7 +26,6 @@ const getFriends = async (req, res) => {
              client.release();
     }
 
-    return res.status(200).json({ data: 'yes' });
 };
 
 const makeFriend = async (req, res) => {
@@ -44,7 +43,6 @@ const makeFriend = async (req, res) => {
     catch(err) {
         return res.status(403).json({});
     }
-    return res.status(200).json({ data: 'yes' });
 };
 
 const friendRequest = async (req, res) => {

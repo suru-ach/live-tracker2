@@ -28,7 +28,7 @@ function populateFriendsList(data) {
         .map(({ username, phonenumber }) => {
             return `<li class="contact row-flex">
                     <div class="contact-img"></div>
-                    <div>
+                    <div data-phonenumber=${phonenumber}>
                         <h2>${username}</h2>
                         <p>${phonenumber}</p>
                     </div>
@@ -52,7 +52,7 @@ function populateFriendsList(data) {
             return `
                 <li class="contact">
                     <div class="contact-img"></div>
-                    <div>
+                    <div data-phonenumber=${phonenumber}>
                         <h2>${username}</h2>
                         <p>${phonenumber}</p>
                     </div>
