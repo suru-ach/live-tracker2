@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coords - Page</title>
+    <title>Friends</title>
     <link href="./global.css" rel="stylesheet"></link>
 </head>
-<body>
+<body style='justify-content: start;'>
+    <header>
+        <h1>Map page</h1>
+    </header>
+    <div class="container">
+        <h1>Friends List</h1>
+        <ul id="friends" class="contact-list">
+            <!-- Add more contacts as needed -->
+        </ul>
+    </div>
     <h1>Coords page</h1>
     <button id="create-room">create room</button>
     <button id="terminate-room">terminate room</button>
     <input id="x-coords" type="float" name="x-cord" value="0">
     <input id="y-coords" type="float" name="y-cord" value="0">
     <button id="tick">tick</button>
+    <script src="./friends.js"></script>
     <script src="./coords.js"></script>
 </body>
 </html>
