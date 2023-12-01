@@ -6,16 +6,18 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         #map {
-            height: 400px;
+            height: 90vh;
             width: 100%;
         }
     </style>
 </head>
 
 <body>
+    <!--
     <input type="text" id="latitudeInput" placeholder="Enter latitude">
     <input type="text" id="longitudeInput" placeholder="Enter longitude">
     <button onclick="reverseGeocodeAndDisplayMap()">Reverse Geocode & Display Map</button>
+    -->
     <div id="map"></div>
     <p id="result"></p>
 
@@ -65,7 +67,7 @@
                 });
 
             // Update the map's center to the specified coordinates
-            map.setView([latitude, longitude], 13);
+            map.setView([latitude, longitude], 19);
 
             // Add a marker to the map at the specified coordinates
             const marker = L.marker([latitude, longitude]).addTo(map);
@@ -81,6 +83,7 @@
                         const longitude = position.coords.longitude;
 
                         sendTick(latitude, longitude);
+                        reverseGeocodeAndDisplayMap(latitude, longitude);
                         document.getElementById("latitude").textContent = latitude;
                         document.getElementById("longitude").textContent = longitude;
                         mes.innerHTML = "safe";

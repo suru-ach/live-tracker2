@@ -1,11 +1,11 @@
 const friendsList = document.getElementById('friends');
 
 const createRoomButton = document.getElementById('create-room');
-const terminateRoomButton = document.getElementById('terminate-room');
+// const terminateRoomButton = document.getElementById('terminate-room');
 const sendCoords = document.getElementById('tick');
 
-const x_coord_val = document.getElementById('x-coords');
-const y_coord_val = document.getElementById('y-coords');
+// const x_coord_val = document.getElementById('x-coords');
+// const y_coord_val = document.getElementById('y-coords');
 
 let createRoomStatus = false;
 let deleteRoomStatus = false;
@@ -84,8 +84,8 @@ async function sendcoords() {
 }
 
 createRoomButton.addEventListener('click', createRoom);
-terminateRoomButton.addEventListener('click', terminateRoom);
-sendCoords.addEventListener('click', sendcoords);
+// terminateRoomButton.addEventListener('click', terminateRoom);
+// sendCoords.addEventListener('click', sendcoords);
 
 async function getCoord()
 {

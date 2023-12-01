@@ -93,7 +93,7 @@ const getcoords2 = async (req, res) => {
     */
 
     const [x ,y] = [...MapsOnline.get(requestedPhonenumber).currentCoords];
-    return res.status(200).json({ x, y });
+    return res.status(200).json({ x, y, isStalled: false, location: ""});
 }
 
 const getcoords = async (req, res) => {

@@ -31,7 +31,7 @@ function reverseGeocodeAndDisplayMap(latitudeInput, longitudeInput) {
         });
 
     // Update the map's center to the specified coordinates
-    map.setView([latitude, longitude], 13);
+    map.setView([latitude, longitude], 19);
 
     // Add a marker to the map at the specified coordinates
     const marker = L.marker([latitude, longitude]).addTo(map);
@@ -89,7 +89,7 @@ async function getCoords() {
             return res.json();
         })
         .then(data => {
-            const { x, y }  = data;
+            const { x, y, isStalled, location}  = data;
             reverseGeocodeAndDisplayMap(x, y);
             console.log(data);
         })
