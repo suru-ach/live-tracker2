@@ -9,6 +9,8 @@
             height: 90vh;
             width: 100%;
         }
+        #terminate-room {
+        }
     </style>
 </head>
 
@@ -21,6 +23,7 @@
     <div id="map"></div>
     <p id="result"></p>
 
+    <button id="terminate-room">delete room</button>
 
     <p>Latitude: <span id="latitude"></span></p>
     <p>Longitude: <span id="longitude"></span></p>
@@ -133,6 +136,27 @@
             const logHtml = CoordsLog.map(coords => `<div>latitude: ${coords.lat}</div><div>longitude: ${coords.long}</div>`).join('');
             document.getElementById("coords-log").innerHTML = logHtml;
         }
+
+        const deleteRoomButton = document.getElementById('terminate-room');
+
+        async function terminateRoom() {
+            await fetch('/terminateroom', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: "{}"
+            })
+                .then((res) => {
+                    console.log(res);
+                    return res.text();
+                })
+                .then(data => console.log(data))
+                .catch(err => console.log(err))
+        }
+
+        deleteRoomButton.addEventListener('click', terminateRoom);
         getCurrentLocation();
 
     </script>
