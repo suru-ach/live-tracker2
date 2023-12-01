@@ -18,7 +18,6 @@ const verifyToken2 = async (req, res, next) => {
     let flagRefreshValid = true;
     try {
         req.payload = verify(authorizationAccessString, process.env.ACCESS_TOKEN);
-        console.log(req.payload);
     } catch(err) {
         if(err instanceof TokenExpiredError)
             flagRefreshValid = false;

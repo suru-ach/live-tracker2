@@ -16,10 +16,12 @@ const MapsOnline = new Map();
 const startInstance = async (req, res) => {
     const { username, phonenumber } = req.payload; 
     
+    
     if(MapsOnline[phonenumber] != null)
         return res.status(208);
 
     MapsOnline.set(phonenumber, new MapProvider(phonenumber, username)); 
+    console.log(`${username} has started a room`);
     try {
 
     }
@@ -41,6 +43,7 @@ const joinRoom = async (req, res) => {
         const { rows } = await clientInstance.query('select * from friends where (uid = $1 and fid = $2) or (uid = $2 and fid = $1)', [ uid[0].uid, fid[0].uid ]);
         if (rows[0].isfriend === true) {
             MapsOnline.get(transmitterPhonenumber).phoneList.push({ username, phonenumber });
+            console.log(`${phonenumber} has joined ${transmitterPhonenumber}`);
             return res.status(202).send('ok'); 
         } else {
             return res.status(401).send('unauthorized');
@@ -59,6 +62,9 @@ const tick = async (req, res) => {
     const { username, phonenumber } = req.payload; 
     const { x,y,isStalled,location } = req.body;
 
+    if(MapsOnline.get(phonenumber) == null)
+        return res.status(404).json({ data: 'no input' })
+
     MapsOnline.get(phonenumber).currentCoords = [x ,y];
     MapsOnline.get(phonenumber).isStalled = isStalled;
     MapsOnline.get(phonenumber).location = location;
@@ -70,8 +76,9 @@ const tick = async (req, res) => {
 }
 
 const termianteInstance = async(req, res) => {
-    const { phonenumber } = req.payload; 
+    const { username, phonenumber } = req.payload; 
     MapsOnline[phonenumber] = null;
+    console.log(`${username} has terminated the room`);
     return res.status(200).send('ok');
 }
 
