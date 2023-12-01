@@ -32,7 +32,10 @@ async function createRoom() {
             console.log(res);
             return res.text();
         })
-        .then(data => console.log(data))
+        .then(data => {
+            if(data === 'ok')
+                window.location = '/maps.html';
+        })
         .catch(err => console.log(err))
         .finally(() => {
             console.log('end-createroom')
@@ -112,8 +115,28 @@ async function updateCoords()
         .catch((err) => console.log(err));
 }
 
-async function selectToRoom(e) {
-    console.log(e);
+async function sendRoomRequest(phonenumber) {
+    fetch('/joinroom', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body : JSON.stringify({ phonenumber })
+    })
+        .then((res) => {
+            console.log(res);
+            return res.text();
+        })
+        .then(data => {
+            if(data === 'ok')
+                window.location = `/maps_viewer.html?phno=${phonenumber}`;
+        })
+        .catch((err) => console.log(err));
+}
+
+async function joinRoom(e) {
+    if (e.target.classList.value.includes('accept-button'))
+        sendRoomRequest(e.target.dataset.phonenumber);
 }
 
 function populateFriendsList(data) {
@@ -127,8 +150,8 @@ function populateFriendsList(data) {
                         <h2>${username}</h2>
                         <p>${phonenumber}</p>
                     </div>
-                    <div class="button delete-button" data-phonenumber=${phonenumber}>
-                        remove
+                    <div class="button accept-button" data-phonenumber=${phonenumber} style="margin-left: 30%;">
+                        join
                     </div>
                 </li>
             `;
@@ -152,5 +175,5 @@ async function getFriends() {
         .then(err => console.log(err))
 }
 
-friendsList.addEventListener('click', e => selectToRoom(e));
+friendsList.addEventListener('click', e => joinRoom(e));
 getFriends();

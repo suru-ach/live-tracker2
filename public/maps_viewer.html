@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Reverse Geocoding with Embedded Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="text" id="latitudeInput" placeholder="Enter latitude">
+    <input type="text" id="longitudeInput" placeholder="Enter longitude">
+    <button onclick="reverseGeocodeAndDisplayMap()">Reverse Geocode & Display Map</button>
+    <div id="map"></div>
+    <p id="result"></p>
+
+
+    <p>Latitude: <span id="latitude"></span></p>
+    <p>Longitude: <span id="longitude"></span></p>
+    <button onclick="getCurrentLocation()">Get Location</button>
+
+    <p id="message">safe</p>
+
+    <button onclick="getLocation()">render Map</button>
+
+    <div id="coords-log"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="./maps_viewer.js"></script>
+
+</body>
+
+</html>

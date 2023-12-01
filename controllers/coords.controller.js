@@ -1,7 +1,6 @@
 const { clientInstance } = require('../db/config.js');
 
 class MapProvider {
-    
     constructor(phonenumber, username) {
         this.phonenumber = phonenumber;
         this.username = username;
@@ -10,7 +9,6 @@ class MapProvider {
         this.phoneList = [];
         this.currentCoords = [];
     }
-
 };
 
 const MapsOnline = new Map();
@@ -21,7 +19,7 @@ const startInstance = async (req, res) => {
     if(MapsOnline[phonenumber] != null)
         return res.status(208);
 
-    MapsOnline[phonenumber] = new MapProvider(phonenumber, username); 
+    MapsOnline.set(phonenumber, new MapProvider(phonenumber, username)); 
     try {
 
     }
@@ -33,28 +31,42 @@ const startInstance = async (req, res) => {
 
 const joinRoom = async (req, res) => {
     const { username, phonenumber } = req.payload;
-    const { transmitterPhonenumber } = req.body;
+    const { phonenumber: transmitterPhonenumber } = req.body;
     
-    if(MapsOnline[transmitterPhonenumber] != null)
-        return res.status(204);
-
-    MapsOnline[transmitterPhonenumber].phoneList.push({ username, phonenumber });
-    return res.status(202); 
+    let client;
+    try {
+        client = await clientInstance.connect();
+        const { rows: uid } = await clientInstance.query('select uid from "user" where phonenumber = $1', [phonenumber]);
+        const { rows: fid } = await clientInstance.query('select uid from "user" where phonenumber = $1', [transmitterPhonenumber]);
+        const { rows } = await clientInstance.query('select * from friends where (uid = $1 and fid = $2) or (uid = $2 and fid = $1)', [ uid[0].uid, fid[0].uid ]);
+        if (rows[0].isfriend === true) {
+            MapsOnline.get(transmitterPhonenumber).phoneList.push({ username, phonenumber });
+            return res.status(202).send('ok'); 
+        } else {
+            return res.status(401).send('unauthorized');
+        }
+    }
+    catch(err) {
+        return res.status(500).send('db error'); 
+    }
+    finally {
+        if(client)
+            client.release();
+    }
 }
 
 const tick = async (req, res) => {
     const { username, phonenumber } = req.payload; 
     const { x,y,isStalled,location } = req.body;
 
-    console.log(req.body);
+    MapsOnline.get(phonenumber).currentCoords = [x ,y];
+    MapsOnline.get(phonenumber).isStalled = isStalled;
+    MapsOnline.get(phonenumber).location = location;
     
-    MapsOnline[phonenumber].currentCoords = [x ,y];
-    MapsOnline[phonenumber].isStalled = isStalled;
-    MapsOnline[phonenumber].location = location;
-
     // save in db phonenumber,x,y,isStalled
-    const data = `${MapsOnline[phonenumber].currentCoords[0]}, ${MapsOnline[phonenumber].currentCoords[1]}`;
-    return res.status(201).send(data);
+    // const data = `${MapsOnline[phonenumber].currentCoords[0]}, ${MapsOnline[phonenumber].currentCoords[1]}`;
+    const data = MapsOnline.get(phonenumber).currentCoords;
+    return res.status(201).json({ data });
 }
 
 const termianteInstance = async(req, res) => {
@@ -64,9 +76,23 @@ const termianteInstance = async(req, res) => {
 }
 
 const getcoords2 = async (req, res) => {
-    const { requestedPhonenumber } = req.body; 
-    
-    const [x ,y] = [...MapsOnline[requestedPhonenumber].currentCoords];
+    const { phonenumber: payload_phonenumber } = req.payload;
+    const { phonenumber: requestedPhonenumber } = req.body; 
+
+    if(MapsOnline.get(requestedPhonenumber) === undefined)
+        return res.status(404).json({ data :MapsOnline.get(requestedPhonenumber) });
+
+
+    /*
+    const exists = MapsOnline.get(requestedPhonenumber).phoneList.some(({ username, phonenumber }) => {
+        phonenumber === payload_phonenumber
+    });
+
+    if(!exists)
+        return res.status(401).send('not in list');
+    */
+
+    const [x ,y] = [...MapsOnline.get(requestedPhonenumber).currentCoords];
     return res.status(200).json({ x, y });
 }
 

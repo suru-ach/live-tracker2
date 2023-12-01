@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friends</title>
     <link href="./global.css" rel="stylesheet"></link>
+    <style>
+    </style>
 </head>
 <body style='justify-content: start;'>
     <header>
@@ -17,12 +19,13 @@
         </ul>
     </div>
     <h1>Coords page</h1>
-    <button id="create-room">create room</button>
+    <div class="container">
+        <button id="create-room" class="accept-button" style="font-weight: bold;">create room</button>
+    </div>
     <button id="terminate-room">terminate room</button>
     <input id="x-coords" type="float" name="x-cord" value="0">
     <input id="y-coords" type="float" name="y-cord" value="0">
     <button id="tick">tick</button>
-    <script src="./friends.js"></script>
     <script src="./coords.js"></script>
 </body>
 </html>

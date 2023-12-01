@@ -80,6 +80,7 @@
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
 
+                        sendTick(latitude, longitude);
                         document.getElementById("latitude").textContent = latitude;
                         document.getElementById("longitude").textContent = longitude;
                         mes.innerHTML = "safe";
@@ -103,10 +104,33 @@
             }, 5000);
         }
 
+        function sendTick(latitude, longitude) {
+            fetch('/tick', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ x: latitude, y: longitude, isStalled: false, location: "" })
+            })
+                .then((res) => { 
+                    console.log(res);
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(err => console.log(err))
+                .finally(() => {
+                    console.log('error get coords')
+                })
+        }
+
         function renderLog() {
             const logHtml = CoordsLog.map(coords => `<div>latitude: ${coords.lat}</div><div>longitude: ${coords.long}</div>`).join('');
             document.getElementById("coords-log").innerHTML = logHtml;
         }
+        getCurrentLocation();
 
     </script>
 
