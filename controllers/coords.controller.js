@@ -16,14 +16,13 @@ const MapsOnline = new Map();
 const startInstance = async (req, res) => {
     const { username, phonenumber } = req.payload; 
     
-    
     if(MapsOnline[phonenumber] != null)
         return res.status(208);
 
     MapsOnline.set(phonenumber, new MapProvider(phonenumber, username)); 
     console.log(`${username} has started a room`);
     try {
-
+        // create a table with rid uid
     }
     catch(err) {
 
