@@ -85,6 +85,12 @@
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
 
+                        const CoordsLen = CoordsLog.length;
+                        let distanceCovered = 1000;
+                        if(CoordsLen >= 36) {
+                            distanceCovered = haversine(latitude, longitude, CoordsLog[CoordsLen - 36].lat, CoordsLog[CoordsLen - 36].long);
+                        }
+
                         sendTick(latitude, longitude);
                         reverseGeocodeAndDisplayMap(latitude, longitude);
                         document.getElementById("latitude").textContent = latitude;
@@ -92,14 +98,6 @@
                         mes.innerHTML = "safe";
                         CoordsLog.push({ lat: latitude, long: longitude });
                         
-                        const CoordsLen = CoordsLog.length;
-                        if(CoordsLen >= 36) {
-                            const distanceCovered = haversine(latitude, longitude, CoordsLog[CoordsLen - 36].lat, CoordsLog[CoordsLen - 36].long);
-                            alert(distanceCovered);
-                        } else {
-                            const distanceCovered = haversine(latitude, longitude, CoordsLog[0].lat, CoordsLog[0].long);
-                            alert(distanceCovered);
-                        }
                         //console.log({ lat: latitude, long: longitude }, counter++);
                     },
                     function (error) {
@@ -119,14 +117,14 @@
             }, 5000);
         }
 
-        function sendTick(latitude, longitude) {
+        function sendTick(latitude, longitude, isStalled = false) {
             fetch('/tick', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ x: latitude, y: longitude, isStalled: false, location: "" })
+                body: JSON.stringify({ x: latitude, y: longitude, isStalled , location: "" })
             })
                 .then((res) => { 
                     console.log(res);
