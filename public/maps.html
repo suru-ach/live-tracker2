@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         #map {
-            height: 90vh;
+            height: 85vh;
             width: 100%;
         }
         #terminate-room {
@@ -86,12 +86,24 @@
                         const longitude = position.coords.longitude;
 
                         const CoordsLen = CoordsLog.length;
-                        let distanceCovered = 1000;
+                        let isStalled = false;
+                        let distanceCovered;
                         if(CoordsLen >= 36) {
                             distanceCovered = haversine(latitude, longitude, CoordsLog[CoordsLen - 36].lat, CoordsLog[CoordsLen - 36].long);
+                            if(distanceCovered < 10) {
+                                isStalled = true;    
+                            }
                         }
 
-                        sendTick(latitude, longitude);
+                        // test
+                        if(CoordsLen >= 6) {
+                            distanceCovered = haversine(latitude, longitude, CoordsLog[CoordsLen - 6].lat, CoordsLog[CoordsLen - 6].long);
+                            if(distanceCovered < 10) {
+                                isStalled = true;    
+                            }
+                        }
+
+                        sendTick(latitude, longitude, isStalled);
                         reverseGeocodeAndDisplayMap(latitude, longitude);
                         document.getElementById("latitude").textContent = latitude;
                         document.getElementById("longitude").textContent = longitude;
@@ -117,7 +129,7 @@
             }, 5000);
         }
 
-        function sendTick(latitude, longitude, isStalled = false) {
+        function sendTick(latitude, longitude, isStalled) {
             fetch('/tick', {
                 method: 'POST',
                 credentials: 'include',

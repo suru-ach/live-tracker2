@@ -88,18 +88,18 @@ const getcoords2 = async (req, res) => {
     if(MapsOnline.get(requestedPhonenumber) === undefined)
         return res.status(404).json({ data :MapsOnline.get(requestedPhonenumber) });
 
+    const isfirst = MapsOnline.get(requestedPhonenumber).phoneList[0].phonenumber == payload_phonenumber ? true : false;
 
-    /*
-    const exists = MapsOnline.get(requestedPhonenumber).phoneList.some(({ username, phonenumber }) => {
-        phonenumber === payload_phonenumber
+    const exists = MapsOnline.get(requestedPhonenumber).phoneList.some((val) => {
+        return val.phonenumber == payload_phonenumber
     });
 
     if(!exists)
         return res.status(401).send('not in list');
-    */
 
     const [x ,y] = [...MapsOnline.get(requestedPhonenumber).currentCoords];
-    return res.status(200).json({ x, y, isStalled: false, location: ""});
+    const isStalled = MapsOnline.get(requestedPhonenumber).isStalled;
+    return res.status(200).json({ x, y, isStalled , location: "", isfirst });
 }
 
 const getcoords = async (req, res) => {

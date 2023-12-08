@@ -89,9 +89,15 @@ async function getCoords() {
             return res.json();
         })
         .then(data => {
-            const { x, y, isStalled, location}  = data;
+            const { x, y, isStalled, location, isfirst}  = data;
             reverseGeocodeAndDisplayMap(x, y);
             console.log(data);
+            if(isfirst && isStalled) {
+                window.location = `tel:+${phonenumber}`;
+            }
+            else if(isStalled  && "vibrate" in navigator) {
+                navigator.vibrate(1000);
+            }
         })
         .catch(err => console.log(err))
         .finally(() => {
