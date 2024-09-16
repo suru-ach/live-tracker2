@@ -25,3 +25,8 @@ Run the project
     npm run start
 ```
 
+## Test runs
+![Alt Text](https://github.com/suru-ach/live-tracker2/blob/main/public/map-2.png?raw=true)
+
+![Alt Text](https://github.com/suru-ach/live-tracker2/blob/main/public/map-2.jpeg?raw=true)
+
